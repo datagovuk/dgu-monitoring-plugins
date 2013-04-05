@@ -30,7 +30,7 @@ import httplib, sys, re
 from lxml import etree
 
 conn = httplib.HTTPConnection("localhost:8983")
-conn.request("GET", "/solr/admin/stats.jsp")
+conn.request("GET", "/solr/ckan-schema-1.4-dgu/admin/stats.jsp")
 res = conn.getresponse()
 
 if res.status == 200:

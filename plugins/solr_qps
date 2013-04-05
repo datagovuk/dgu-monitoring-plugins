@@ -40,7 +40,7 @@ if sys.argv[-1] == 'config':
 	print "graph_category search"
 	print "qps.label Queries per second"
 else:
-	conn = httplib.HTTPConnection("localhost:8080")
+	conn = httplib.HTTPConnection("localhost:8983")
 	conn.request("GET", "/solr/admin/stats.jsp")
 	res = conn.getresponse()
 

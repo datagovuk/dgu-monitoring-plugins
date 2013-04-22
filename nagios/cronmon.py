@@ -111,7 +111,8 @@ if __name__ == "__main__":
     p = OptionParser()
     p.add_option("-d", "--debug", dest="debug", default=False, action="store_true",
         help="Specifies that tests should be run")
-    p.add_option("-f", "--file", dest="filename", help="Location of syslog file")
+    p.add_option("-f", "--file", dest="filename", help="Location of syslog file",
+        default="/var/log/syslog")
     p.add_option("-l", "--line", dest="match_line", help="The line to match",
         default="--plugin=ckanext-harvest harvester run")
     p.add_option("-t", "--time", dest="time_span", default=10, type="int",

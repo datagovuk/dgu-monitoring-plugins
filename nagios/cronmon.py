@@ -125,4 +125,5 @@ if __name__ == "__main__":
         sys.exit(0)
 
     state, msg = process_log(log=options.filename)
+    print msg
     sys.exit(state)

@@ -16,18 +16,17 @@
  """
 import os
 import sys
+from optparse import OptionParser
 from datetime import datetime, timedelta
 from dateutil import parser
 
 STATE_OK = 0
 STATE_WARNING  = 1
 STATE_CRITICAL = 2
-MATCH_LINE  = "--plugin=ckanext-harvest harvester run"
-TIME_SPAN   = 11  # 10 minutes by default
 BUFFER_SIZE = 4096
 
 debug = False
-
+options = None
 
 # Setup testing data if test is passed as a command line arg
 debug = len(sys.argv) == 2 and sys.argv[1] == 'test'
@@ -69,20 +68,19 @@ def seek_back_until(when, filesize, f, offset=1):
 
 def process_log(time_now=datetime.now(), log="/var/syslog"):
     """ Run the process against the specified log file """
-    when_warning = time_now - timedelta(minutes=TIME_SPAN * 3)
-    when_ok = time_now - timedelta(minutes=TIME_SPAN)
+    when_warning = time_now - timedelta(minutes=options.time_span * 3)
+    when_ok = time_now - timedelta(minutes=options.time_span)
     size = os.stat(log).st_size
-
     msg = "CRITICAL: Task has not run in last 30 minutes"
     state = STATE_CRITICAL
     with open(log, "r") as f:
         seek_back_until(when_warning, size, f)
         for line in f:
             date_on_line = read_date(line)
-            if date_on_line > when_ok and MATCH_LINE in line:
+            if date_on_line > when_ok and options.match_line in line:
                 state = STATE_OK
                 msg = "OK: Task ran %d minutes ago" % ((time_now - date_on_line).seconds / 60)
-            elif date_on_line > when_warning and MATCH_LINE in line:
+            elif date_on_line > when_warning and options.match_line in line:
                 state = STATE_WARNING
                 msg = "WARNING: Task last ran %d minutes ago" % ((time_now - date_on_line).seconds / 60)
     return state, msg
@@ -110,9 +108,20 @@ def test():
 
 
 if __name__ == "__main__":
-    if debug:
+    p = OptionParser()
+    p.add_option("-d", "--debug", dest="debug", default=False, action="store_true",
+        help="Specifies that tests should be run")
+    p.add_option("-f", "--file", dest="filename", help="Location of syslog file")
+    p.add_option("-l", "--line", dest="match_line", help="The line to match",
+        default="--plugin=ckanext-harvest harvester run")
+    p.add_option("-t", "--time", dest="time_span", default=10, type="int",
+        help="Specify the time period that is allowable, in minutes")
+
+    (options, args) = p.parse_args()
+
+    if options.debug:
         test()
         sys.exit(0)
 
-    state, msg = process_log(time_now=datetime(2013, 4, 22, 11, 16, 20), log="./testlog")
+    state, msg = process_log(log=options.filename)
     sys.exit(state)

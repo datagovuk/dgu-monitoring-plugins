@@ -6,12 +6,6 @@
 
 A plugin to check that cron jobs that we have scheduled execute when we would expect. For this specific case it iterates through the syslog file making sure that the harvester task has run within the last 10 minutes (OK) or within the last 30 (WARNING) before concluding that it is a CRITICAL error.
 
-**TODO**:
-
-* Take the line to match as an argument
-* Time the time span as an argument
-
-
 ## Munin plugins for DGU
 
 A collection of plugins for munin to show how the systems are behaving

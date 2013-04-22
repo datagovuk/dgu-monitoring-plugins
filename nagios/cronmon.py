@@ -71,7 +71,7 @@ def process_log(time_now=datetime.now(), log="/var/syslog"):
     when_warning = time_now - timedelta(minutes=options.time_span * 3)
     when_ok = time_now - timedelta(minutes=options.time_span)
     size = os.stat(log).st_size
-    msg = "CRITICAL: Task has not run in last 30 minutes"
+    msg = "CRITICAL: Task has not run in last %d minutes" % (options.time_span * 3,)
     state = STATE_CRITICAL
     with open(log, "r") as f:
         seek_back_until(when_warning, size, f)

@@ -32,7 +32,7 @@
 #
 # Example:
 # [solr_*]
-#    env.host_port solrhost:8080
+#    env.host_port solrhost:8983
 #    env.url /solr
 #    env.qpshandler_select /select
 #
@@ -101,7 +101,7 @@ class SolrCoresAdmin:
         self.data = None
 
     def fetchcores(self):
-        uri = os.path.join(self.solrurl, "admin/cores?action=STATUS&wt=json")
+        uri = os.path.join(self.solrurl, "/admin/cores?action=STATUS&wt=json")
         conn = httplib.HTTPConnection(self.host)
         conn.request("GET", uri)
         res = conn.getresponse()
@@ -330,8 +330,8 @@ max.colour ff0000
 
 class SolrMuninGraph:
     def __init__(self, hostport, solrurl, params):
-        self.solrcoresadmin = SolrCoresAdmin(hostport, solrurl)
-        self.hostport = hostport
+        self.solrcoresadmin = SolrCoresAdmin("localhost:8983", "/solr")
+        self.hostport = "localhost:8983"
         self.solrurl = solrurl
         self.params = params
 
@@ -478,7 +478,7 @@ class SolrMuninGraph:
 
 if __name__ == '__main__':
     params = parse_params()
-    SOLR_HOST_PORT = os.environ.get('host_port', 'localhost:8080').replace('http://', '')
+    SOLR_HOST_PORT = os.environ.get('host_port', 'localhost:8983').replace('http://', '')
     SOLR_URL  = os.environ.get('url', '/solr')
     if SOLR_URL[0] != '/':
         SOLR_URL = '/' + SOLR_URL
